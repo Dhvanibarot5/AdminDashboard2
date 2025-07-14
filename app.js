@@ -1,9 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const path = require('path');
-const connectDB = require('./config/db');
+require("dotenv").config();
+const express = require("express");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const path = require("path");
+const connectDB = require("./config/db");
+const flash = require("connect-flash");
 
 const app = express();
 
@@ -12,11 +13,11 @@ connectDB();
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static('uploads'));
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static("uploads"));
 
 // View Engine
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
 // Session
 app.use(
@@ -28,9 +29,12 @@ app.use(
   })
 );
 
+app.use(session({ secret: "your-secret", resave: false, saveUninitialized: false }));
+app.use(flash());
+
 // Routes
-const adminRoutes = require('./routes/adminRoutes');
-app.use('/', adminRoutes);
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/", adminRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 3000;

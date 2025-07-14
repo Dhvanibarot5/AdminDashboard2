@@ -115,7 +115,7 @@ exports.getDashboardPage = async (req, res) => {
     ? {
         $or: [{ name: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }],
       }
-    : {}; // Empty search returns all records
+    : {};
 
   try {
     const totalAdmins = await Admin.countDocuments(query);
@@ -130,6 +130,7 @@ exports.getDashboardPage = async (req, res) => {
       search,
       currentPage: page,
       totalPages: Math.ceil(totalAdmins / limit),
+      successMessage: req.flash("successMessage")[0],
     });
   } catch (err) {
     console.error("Dashboard error:", err);
