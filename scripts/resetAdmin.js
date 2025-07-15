@@ -4,7 +4,7 @@ require("dotenv").config();
 const Admin = require("../models/Admin");
 
 mongoose.connect(process.env.MONGO_URI).then(async () => {
-  const email = "admin@example.com"; // Replace with correct email from DB
+  const email = "admin@example.com";
   const newPassword = "newsecurepassword123";
 
   const admin = await Admin.findOne({ email });
