@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const { ensureAuth } = require("../middleware/auth");
 const upload = adminController.upload.single("profileImage");
+const Admin = require("../models/Admin");
 
 // Auth
 router.get("/login", adminController.getLogin);
@@ -22,10 +23,17 @@ router.get("/", ensureAuth, adminController.getDashboardPage);
 
 // Active/Inactive Admin
 router.post("/admin/toggle-status/:id", async (req, res) => {
-  const admin = await Admin.findById(req.params.id);
-  admin.isActive = !admin.isActive;
-  await admin.save();
-  res.redirect("back");
+  try {
+    const admin = await Admin.findById(req.params.id);
+    if (!admin) return res.status(404).send("Admin not found");
+
+    admin.isActive = !admin.isActive;
+    await admin.save();
+
+  } catch (error) {
+    console.error("Toggle Status Error:", error);
+    res.status(500).send("Server Error");
+  }
 });
 
 router.post("/admin/delete/:id", async (req, res) => {
@@ -38,6 +46,5 @@ router.post("/admin/delete/:id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-
 
 module.exports = router;
